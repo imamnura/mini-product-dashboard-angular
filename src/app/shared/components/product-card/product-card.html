@@ -1,0 +1,23 @@
+<a
+  [routerLink]="['/product', product.id]"
+  class="product-card block bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+>
+  <div class="aspect-square flex items-center justify-center mb-3">
+    <img
+      [src]="product.image"
+      [alt]="product.title"
+      width="300"
+      height="300"
+      class="object-contain max-h-44"
+      loading="lazy"
+    />
+  </div>
+  <p class="text-xs text-slate-500 mb-1">{{ product.category | titlecase }}</p>
+  <h2 class="text-sm font-medium line-clamp-2 mb-2">{{ product.title }}</h2>
+  <div class="flex items-center justify-between">
+    <span class="font-semibold">${{ product.price }}</span>
+    <span class="text-xs text-slate-500">
+      ⭐ {{ product.rating.rate }} ({{ product.rating.count }})
+    </span>
+  </div>
+</a>
