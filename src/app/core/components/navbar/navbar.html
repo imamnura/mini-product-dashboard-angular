@@ -1,0 +1,41 @@
+<header
+  class="sticky top-0 z-50 bg-white dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-700"
+>
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+    <a routerLink="/" class="font-semibold text-orange-500 text-lg">Orange Store</a>
+
+    <nav class="hidden md:flex gap-4 text-sm text-slate-600 dark:text-slate-200">
+      <a
+        [routerLink]="['/']"
+        [queryParams]="{ category: 'men\'s clothing' }"
+        class="hover:text-orange-500 cursor-pointer"
+        >Men</a
+      >
+      <a
+        [routerLink]="['/']"
+        [queryParams]="{ category: 'women\'s clothing' }"
+        class="hover:text-orange-500 cursor-pointer"
+        >Women</a
+      >
+      <a
+        [routerLink]="['/']"
+        [queryParams]="{ category: 'jewelery' }"
+        class="hover:text-orange-500 cursor-pointer"
+        >Jewelry</a
+      >
+      <a
+        [routerLink]="['/']"
+        [queryParams]="{ category: 'electronics' }"
+        class="hover:text-orange-500 cursor-pointer"
+        >Electronic</a
+      >
+    </nav>
+
+    <div class="ml-auto flex items-center gap-3">
+      <app-search-bar (search)="onSearch($event)"></app-search-bar>
+      <button (click)="toggleTheme()" class="border rounded-full px-3 py-1 text-xs">
+        {{ dark ? '☾' : '☀︎' }}
+      </button>
+    </div>
+  </div>
+</header>
