@@ -1,0 +1,111 @@
+<!-- Loading State -->
+<app-loading-spinner *ngIf="isLoading" message="Loading product details..."></app-loading-spinner>
+
+<!-- Error State -->
+<app-error-state
+  *ngIf="isError && !isLoading"
+  message="Product not found or failed to load."
+  (retry)="retryLoad()"
+></app-error-state>
+
+<!-- Product Detail -->
+<section class="max-w-6xl mx-auto px-4 py-6" *ngIf="product && !isLoading && !isError">
+  <!-- Breadcrumb -->
+  <nav class="text-xs text-slate-500 dark:text-slate-400 mb-6" aria-label="Breadcrumb">
+    <a [routerLink]="['/']" class="hover:text-orange-500 transition-colors">Home</a>
+    <span class="mx-2">/</span>
+    <button
+      class="hover:text-orange-500 transition-colors"
+      (click)="goToCategory(product.category)"
+    >
+      {{ product.category | titlecase }}
+    </button>
+    <span class="mx-2">/</span>
+    <span class="text-slate-700 dark:text-slate-300">{{ product.title }}</span>
+  </nav>
+
+  <!-- Product Info -->
+  <div class="grid md:grid-cols-2 gap-8 mb-12">
+    <!-- Product Image -->
+    <div class="bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center p-8">
+      <img
+        [src]="product.image"
+        [alt]="product.title"
+        class="object-contain max-h-96 w-full"
+        width="400"
+        height="400"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Product Details -->
+    <div class="flex flex-col">
+      <h1 class="text-3xl font-semibold mb-3">{{ product.title }}</h1>
+
+      <!-- Category Badge -->
+      <button
+        (click)="goToCategory(product.category)"
+        class="inline-flex items-center w-fit px-3 py-1 mb-4 text-xs font-medium bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-300 rounded-full hover:bg-orange-200 dark:hover:bg-orange-800 transition-colors"
+      >
+        {{ product.category | titlecase }}
+      </button>
+
+      <!-- Price -->
+      <p class="text-orange-500 text-3xl font-bold mb-4">${{ product.price }}</p>
+
+      <!-- Rating -->
+      <div class="flex items-center mb-6">
+        <div class="flex items-center text-yellow-500 mr-2">
+          <span class="text-xl">★</span>
+          <span class="ml-1 font-semibold">{{ product.rating.rate }}</span>
+        </div>
+        <span class="text-sm text-slate-500"> ({{ product.rating.count }} reviews) </span>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-6">
+        <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Description</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          {{ product.description }}
+        </p>
+      </div>
+
+      <!-- Action Button -->
+      <button
+        class="w-full md:w-64 bg-slate-300 dark:bg-slate-700 text-slate-600 dark:text-slate-400 py-3 rounded-lg font-medium cursor-not-allowed"
+        disabled
+      >
+        Sold Out
+      </button>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <div class="mt-12">
+    <h2 class="text-2xl font-semibold mb-6">Related Products</h2>
+
+    <!-- Loading State for Related Products -->
+    <div *ngIf="isLoadingRelated" class="flex justify-center py-8">
+      <app-loading-spinner size="sm" message="Loading related products..."></app-loading-spinner>
+    </div>
+
+    <!-- Related Products Grid -->
+    <div
+      *ngIf="!isLoadingRelated && relatedProducts.length > 0"
+      class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+    >
+      <app-product-card
+        *ngFor="let relatedProduct of relatedProducts"
+        [product]="relatedProduct"
+      ></app-product-card>
+    </div>
+
+    <!-- No Related Products -->
+    <p
+      *ngIf="!isLoadingRelated && relatedProducts.length === 0"
+      class="text-center text-slate-500 py-8"
+    >
+      No related products found.
+    </p>
+  </div>
+</section>
