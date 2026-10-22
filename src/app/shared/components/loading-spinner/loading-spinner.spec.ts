@@ -25,7 +25,7 @@ describe('LoadingSpinner', () => {
   });
 
   it('should display custom message', () => {
-    component.message = 'Loading products...';
+    fixture.componentRef.setInput('message', 'Loading products...');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;

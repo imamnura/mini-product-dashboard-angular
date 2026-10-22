@@ -1,5 +1,6 @@
-import { Injectable, TransferState, makeStateKey } from '@angular/core';
+import { Injectable, PLATFORM_ID, TransferState, inject, makeStateKey } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { isPlatformServer } from '@angular/common';
 import { firstValueFrom, timeout } from 'rxjs';
 
 export interface Product {
@@ -31,6 +32,7 @@ export class ProductService {
   private cacheCategories?: string[];
   private cacheDuration = 5 * 60 * 1000; // 5 minutes
   private cacheTimestamp = new Map<string, number>();
+  private readonly isServer = isPlatformServer(inject(PLATFORM_ID));
 
   constructor(private http: HttpClient, private transferState: TransferState) {}
 
@@ -65,8 +67,10 @@ export class ProductService {
     this.cacheTimestamp.set('all', Date.now());
     console.log(`✅ Loaded ${this.cacheAll.length} products`);
 
-    // Store in TransferState for SSR
-    this.transferState.set(ALL_PRODUCTS_KEY, this.cacheAll);
+    // Store in TransferState so the browser can reuse SSR data
+    if (this.isServer) {
+      this.transferState.set(ALL_PRODUCTS_KEY, this.cacheAll);
+    }
 
     return this.cacheAll;
   }
@@ -122,8 +126,10 @@ export class ProductService {
     this.cacheCategories = await firstValueFrom(res$);
     this.cacheTimestamp.set('categories', Date.now());
 
-    // Store in TransferState for SSR
-    this.transferState.set(CATEGORIES_KEY, this.cacheCategories);
+    // Store in TransferState so the browser can reuse SSR data
+    if (this.isServer) {
+      this.transferState.set(CATEGORIES_KEY, this.cacheCategories);
+    }
 
     return this.cacheCategories;
   }

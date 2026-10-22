@@ -6,60 +6,68 @@
       alt="Fall/Winter Collection"
       class="w-full h-[280px] md:h-[360px] object-cover"
       loading="lazy"
-    />
-    <div class="absolute inset-0 bg-black/40 text-white flex flex-col justify-center items-center">
-      <h2 class="text-2xl md:text-3xl font-semibold">Discover Our Fall/Winter 2025 Collection</h2>
-      <p class="text-sm md:text-base">Step into the season with fresh new arrivals</p>
+      />
+      <div class="absolute inset-0 bg-black/40 text-white flex flex-col justify-center items-center">
+        <h2 class="text-2xl md:text-3xl font-semibold">Discover Our Fall/Winter 2025 Collection</h2>
+        <p class="text-sm md:text-base">Step into the season with fresh new arrivals</p>
+      </div>
     </div>
+
+    <!-- Loading State -->
+    @if (isLoading) {
+      <app-loading-spinner message="Loading products..."></app-loading-spinner>
+    }
+
+    <!-- Error State -->
+    @if (isError && !isLoading) {
+      <app-error-state
+        message="Failed to load products. Please try again."
+        (retry)="retryLoad()"
+      ></app-error-state>
+    }
+
+    <!-- Products Section -->
+    @if (!isLoading && !isError) {
+      <div>
+        <!-- Header with Category Filter -->
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold">
+            {{ selectedCategory === 'all' ? 'All Products' : (selectedCategory | titlecase) }}
+            <span class="text-sm text-slate-500 ml-2">({{ products.length }} items)</span>
+          </h2>
+          <select
+            class="border rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 dark:border-slate-600"
+            [value]="selectedCategory"
+            (change)="onCategoryChange($event)"
+            >
+            <option value="all">All Categories</option>
+            @for (cat of categories; track cat) {
+              <option [value]="cat">
+                {{ cat | titlecase }}
+              </option>
+            }
+          </select>
+        </div>
+        <!-- Product Grid -->
+        <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          @for (product of visibleProducts; track product) {
+            <app-product-card [product]="product">
+            </app-product-card>
+          }
+        </div>
+        <!-- Empty State -->
+        @if (visibleProducts.length === 0) {
+          <div class="text-center py-10">
+            <p class="text-slate-500">No products found.</p>
+          </div>
+        }
+        <!-- Pagination -->
+        <app-pagination
+          [currentPage]="currentPage"
+          [totalItems]="products.length"
+          [itemsPerPage]="itemsPerPage"
+          (pageChange)="onPageChange($event)"
+        ></app-pagination>
+      </div>
+    }
   </div>
-
-  <!-- Loading State -->
-  <app-loading-spinner *ngIf="isLoading" message="Loading products..."></app-loading-spinner>
-
-  <!-- Error State -->
-  <app-error-state
-    *ngIf="isError && !isLoading"
-    message="Failed to load products. Please try again."
-    (retry)="retryLoad()"
-  ></app-error-state>
-
-  <!-- Products Section -->
-  <div *ngIf="!isLoading && !isError">
-    <!-- Header with Category Filter -->
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold">
-        {{ selectedCategory === 'all' ? 'All Products' : (selectedCategory | titlecase) }}
-        <span class="text-sm text-slate-500 ml-2">({{ products.length }} items)</span>
-      </h2>
-      <select
-        class="border rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 dark:border-slate-600"
-        [value]="selectedCategory"
-        (change)="onCategoryChange($event)"
-      >
-        <option value="all">All Categories</option>
-        <option *ngFor="let cat of categories" [value]="cat">
-          {{ cat | titlecase }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Product Grid -->
-    <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      <app-product-card *ngFor="let product of visibleProducts" [product]="product">
-      </app-product-card>
-    </div>
-
-    <!-- Empty State -->
-    <div *ngIf="visibleProducts.length === 0" class="text-center py-10">
-      <p class="text-slate-500">No products found.</p>
-    </div>
-
-    <!-- Pagination -->
-    <app-pagination
-      [currentPage]="currentPage"
-      [totalItems]="products.length"
-      [itemsPerPage]="itemsPerPage"
-      (pageChange)="onPageChange($event)"
-    ></app-pagination>
-  </div>
-</div>
